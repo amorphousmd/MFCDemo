@@ -13,7 +13,7 @@
 
 // CAboutDlg dialog used for App About
 
-class CAboutDlg : public CDialogEx
+class CAboutDlg : public CDialogEx, public CSerialIO
 {
 public:
 	CAboutDlg();
@@ -60,6 +60,8 @@ void CMFCDemoDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_COMBO_SERIALNAME, m_ccbSerialName);
 	DDX_Control(pDX, IDC_COMBO_BAUDRATE, m_ccbBaudrate);
 	DDX_Control(pDX, IDC_BUTTON_OPEN, m_btnOpen);
+	DDX_Control(pDX, IDC_EDIT_SEND1, m_ceSendCmd1);
+	DDX_Control(pDX, IDC_BUTTON_SEND1, m_btnSendCmd1);
 }
 
 BEGIN_MESSAGE_MAP(CMFCDemoDlg, CDialogEx)
@@ -68,6 +70,7 @@ BEGIN_MESSAGE_MAP(CMFCDemoDlg, CDialogEx)
 	ON_WM_QUERYDRAGICON()
 	ON_CBN_DROPDOWN(IDC_COMBO_SERIALNAME, &CMFCDemoDlg::OnCbnDropdownComboSerialname)
 	ON_BN_CLICKED(IDC_BUTTON_OPEN, &CMFCDemoDlg::OnBnClickedButtonOpen)
+	ON_BN_CLICKED(IDC_BUTTON_SEND1, &CMFCDemoDlg::OnBnClickedButtonSend1)
 END_MESSAGE_MAP()
 
 
@@ -204,5 +207,67 @@ void CMFCDemoDlg::OnCbnDropdownComboSerialname()
 
 void CMFCDemoDlg::OnBnClickedButtonOpen()
 {
+	// TODO: Add your control notification handler code here
+	if (bPortOpened == FALSE)
+	{
+		CString csPortName;
+		CString csBaudRate;
+		m_ccbSerialName.GetLBText(m_ccbSerialName.GetCurSel(), csPortName);
+		m_ccbBaudrate.GetLBText(m_ccbBaudrate.GetCurSel(), csBaudRate);
 
+		OpenPort(csPortName, csBaudRate);
+
+	}
+	else
+	{
+		ClosePort();
+	}
+}
+
+/**
+* \brief Handle Open Serial Port Events
+* \param bSuccess
+*/
+void CMFCDemoDlg::OnEventOpen(BOOL bSuccess)
+{
+}
+
+/**
+* \brief Handle Close Serial Port Events
+* \param bSuccess
+*/
+void CMFCDemoDlg::OnEventClose(BOOL bSuccess)
+{
+}
+
+/**
+* \brief Handle Receive Data from Serial
+* \param inPacket
+* \param inLength
+*/
+void CMFCDemoDlg::OnEventRead(char* inPacket, int inLength)
+{
+}
+
+/**
+* \brief Handle Write Data
+* \param nWritten
+*/
+void CMFCDemoDlg::OnEventWrite(int nWritten)
+{
+}
+
+
+
+void CMFCDemoDlg::OnBnClickedButtonSend1()
+{
+	// TODO: Add your control notification handler code here
+		// TODO: Add your control notification handler code here
+	CString	Cmd;
+	if (!GetPortActivateValue()) return;
+
+	m_ceSendCmd1.GetWindowText(Cmd);
+
+	TCHAR* cmd = (LPTSTR)(LPCTSTR)Cmd;
+	Write((char*)cmd, Cmd.GetLength());
 }

@@ -3,9 +3,11 @@
 //
 
 #pragma once
+#include "SerialCtrl.h"
 #include "afxwin.h"
 // CMFCDemoDlg dialog
-class CMFCDemoDlg : public CDialogEx
+
+class CMFCDemoDlg : public CDialogEx, public CSerialIO
 {
 // Construction
 public:
@@ -40,5 +42,13 @@ public:
 	//Add by User
 	BOOL bPortOpened = 0;
 
+	virtual void OnEventOpen(BOOL bSuccess);
+	virtual void OnEventClose(BOOL bSuccess);
+	virtual void OnEventRead(char* inPacket, int inLength);
+	virtual void OnEventWrite(int nWritten);
 
+
+	CEdit m_ceSendCmd1;
+	CButton m_btnSendCmd1;
+	afx_msg void OnBnClickedButtonSend1();
 };
