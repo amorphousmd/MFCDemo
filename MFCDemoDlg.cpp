@@ -93,6 +93,10 @@ void CMFCDemoDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_BUTTON_STT, mBtnStatus);
 	DDX_Control(pDX, IDC_LIST_RECEIVEDATA, m_listboxRead);
 	DDX_Control(pDX, IDC_BUTTON2, m_staticInfo);
+	DDX_Control(pDX, IDC_CHECK_LED1, m_chLed1);
+	DDX_Control(pDX, IDC_CHECK_GPIO1, m_chGPIO1);
+	DDX_Control(pDX, IDC_CHECK_LED2, m_chLed2);
+	DDX_Control(pDX, IDC_CHECK_GPIO2, m_chGPIO2);
 }
 
 BEGIN_MESSAGE_MAP(CMFCDemoDlg, CDialogEx)
@@ -117,7 +121,6 @@ END_MESSAGE_MAP()
 BOOL CMFCDemoDlg::OnInitDialog()
 {
 	CDialogEx::OnInitDialog();
-
 	// Add "About..." menu item to system menu.
 
 	// IDM_ABOUTBOX must be in the system command range.
@@ -409,6 +412,30 @@ VOID CMFCDemoDlg::ProcessData(char* data, int inLength)
 	}
 	else if (cmd.Compare((LPCWSTR)"GSTT") == 0)
 	{
+		if (bProtocolDataBuffer[12] == 0x01) {
+			m_chLed1.SetCheck(1);
+		}
+		else {
+			m_chLed1.SetCheck(0);
+		}
+		if (bProtocolDataBuffer[13] == 0x01) {
+			m_chGPIO1.SetCheck(1);
+		}
+		else {
+			m_chGPIO1.SetCheck(0);
+		}
+		if (bProtocolDataBuffer[14] == 0x01) {
+			m_chLed2.SetCheck(1);
+		}
+		else {
+			m_chLed2.SetCheck(0);
+		}
+		if (bProtocolDataBuffer[15] == 0x01) {
+			m_chGPIO2.SetCheck(1);
+		}
+		else {
+			m_chGPIO2.SetCheck(0);
+		}
 
 	}
 }

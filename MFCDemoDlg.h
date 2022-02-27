@@ -66,4 +66,8 @@ public:
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
 	afx_msg void OnBnClickedRadioTimer();
 	afx_msg void OnBnClickedRadioEvent();
+	CButton m_chLed1;
+	CButton m_chGPIO1;
+	CButton m_chLed2;
+	CButton m_chGPIO2;
 };
