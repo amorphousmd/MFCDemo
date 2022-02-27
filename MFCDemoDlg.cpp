@@ -9,7 +9,32 @@
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
+#define EVENT_SEND_BY_TIMER 0
+//STX
+BYTE bSTX[] = { 0x02 };
 
+//CMD
+BYTE bMOVL[] = { 0x4D, 0x4F, 0x56, 0x4C };
+BYTE bGPOS[] = { 0x47, 0x50, 0x4F, 0x53 };
+BYTE bGVEL[] = { 0x47, 0x56, 0x45, 0x4C };
+BYTE bSTT[] = { 0x47, 0x53, 0x54, 0x54 };
+
+//OPTION
+BYTE bOPT[] = { 0x00, 0x00, 0x00 };
+
+//DATA
+BYTE bDATA[8] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x01 };
+
+//SYNC & ACK
+BYTE bSYNC[] = { 0x16 };
+BYTE bACK[] = { 0x06 };
+
+//ETX
+BYTE bETX[] = { 0x03 };
+
+//RECEIVE
+BYTE bProtocolDataBuffer[18] = {  };
+BYTE bProtocolData[8] = {  };
 
 // CAboutDlg dialog used for App About
 
@@ -62,6 +87,12 @@ void CMFCDemoDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_BUTTON_OPEN, m_btnOpen);
 	DDX_Control(pDX, IDC_EDIT_SEND1, m_ceSendCmd1);
 	DDX_Control(pDX, IDC_BUTTON_SEND1, m_btnSendCmd1);
+	DDX_Control(pDX, IDC_BUTTON_POS, mBtnPosition);
+	DDX_Control(pDX, IDC_BUTTON_VEL, mBtnVelocity);
+	DDX_Control(pDX, IDC_BUTTON_MOV, mBtnMove);
+	DDX_Control(pDX, IDC_BUTTON_STT, mBtnStatus);
+	DDX_Control(pDX, IDC_LIST_RECEIVEDATA, m_listboxRead);
+	DDX_Control(pDX, IDC_BUTTON2, m_staticInfo);
 }
 
 BEGIN_MESSAGE_MAP(CMFCDemoDlg, CDialogEx)
@@ -71,6 +102,13 @@ BEGIN_MESSAGE_MAP(CMFCDemoDlg, CDialogEx)
 	ON_CBN_DROPDOWN(IDC_COMBO_SERIALNAME, &CMFCDemoDlg::OnCbnDropdownComboSerialname)
 	ON_BN_CLICKED(IDC_BUTTON_OPEN, &CMFCDemoDlg::OnBnClickedButtonOpen)
 	ON_BN_CLICKED(IDC_BUTTON_SEND1, &CMFCDemoDlg::OnBnClickedButtonSend1)
+	ON_BN_CLICKED(IDC_BUTTON_POS, &CMFCDemoDlg::OnBnClickedButtonPos)
+	ON_BN_CLICKED(IDC_BUTTON_VEL, &CMFCDemoDlg::OnBnClickedButtonVel)
+	ON_BN_CLICKED(IDC_BUTTON_MOV, &CMFCDemoDlg::OnBnClickedButtonMov)
+	ON_BN_CLICKED(IDC_BUTTON_STT, &CMFCDemoDlg::OnBnClickedButtonStt)
+	ON_WM_TIMER()
+	ON_BN_CLICKED(IDC_RADIO_TIMER, &CMFCDemoDlg::OnBnClickedRadioTimer)
+	ON_BN_CLICKED(IDC_RADIO_EVENT, &CMFCDemoDlg::OnBnClickedRadioEvent)
 END_MESSAGE_MAP()
 
 
@@ -247,6 +285,23 @@ void CMFCDemoDlg::OnEventClose(BOOL bSuccess)
 */
 void CMFCDemoDlg::OnEventRead(char* inPacket, int inLength)
 {
+	CString csInPacket;
+	csInPacket.Format((CString)"Receive: ");
+	m_listboxRead.InsertString(0, csInPacket);
+	csInPacket.Empty();
+
+	for (UINT i = 0; i < (UINT)inLength; i++)
+	{
+		csInPacket.AppendFormat((CString)"%02X", csInPacket[i]);
+	}
+	m_listboxRead.InsertString(0, csInPacket);
+
+	ProcessData(inPacket, inLength);
+
+	CString str;
+	str.Format((CString)"%d bytes read", inLength);
+
+	m_staticInfo.SetWindowText(str);
 }
 
 /**
@@ -270,4 +325,146 @@ void CMFCDemoDlg::OnBnClickedButtonSend1()
 
 	TCHAR* cmd = (LPTSTR)(LPCTSTR)Cmd;
 	Write((char*)cmd, Cmd.GetLength());
+}
+
+
+void CMFCDemoDlg::OnBnClickedButtonPos()
+{
+	// TODO: Add your control notification handler code here
+	BYTE ProtocolFrame[50] = {};
+	UINT index = 0;
+	if (!GetPortActivateValue()) return;
+	memcpy(ProtocolFrame + index, bSTX, sizeof(bSTX));
+	index += sizeof(bSTX);
+	memcpy(ProtocolFrame + index, bGPOS, sizeof(bGPOS));
+	index += sizeof(bGPOS);
+	memcpy(ProtocolFrame + index, bOPT, sizeof(bOPT));
+	index += sizeof(bOPT);
+	memcpy(ProtocolFrame + index, bDATA, sizeof(bDATA));
+	index += sizeof(bDATA);
+	memcpy(ProtocolFrame + index, bSYNC, sizeof(bSYNC));
+	index += sizeof(bSYNC);
+	memcpy(ProtocolFrame + index, bETX, sizeof(bETX));
+	index += sizeof(bETX);
+
+	Write((char*)ProtocolFrame, index);
+	CString cmd;
+	cmd.Format((LPCTSTR)"%s", "POS CMD: ");
+	m_listboxRead.InsertString(0, cmd);
+	cmd.Empty();
+	for (UINT i = 0; i < index; i++)
+	{
+		cmd.AppendFormat((LPCTSTR)"%02X", ProtocolFrame[i]);
+	}
+	m_listboxRead.InsertString(0, cmd);
+
+}
+
+
+void CMFCDemoDlg::OnBnClickedButtonVel()
+{
+	// TODO: Add your control notification handler code here
+}
+
+
+void CMFCDemoDlg::OnBnClickedButtonMov()
+{
+	// TODO: Add your control notification handler code here
+}
+
+
+void CMFCDemoDlg::OnBnClickedButtonStt()
+{
+	// TODO: Add your control notification handler code here
+}
+
+VOID CMFCDemoDlg::ProcessData(char* data, int inLength)
+{
+	CString cmd;
+	for (UINT i = 0; i < (UINT)inLength; i++)
+	{
+		bProtocolDataBuffer[i] = (BYTE)data[i];
+	}
+	for (UINT i = 1; i <= 4; i++)
+	{
+		cmd.AppendChar((char)bProtocolDataBuffer[i]);
+	}
+	for (UINT i = 8; i <= 15; i++)
+	{
+		bProtocolData[i - 8] = bProtocolDataBuffer[i];
+	}
+
+	if (cmd.Compare((LPCWSTR)"GPOS") == 0)
+	{
+
+	}
+
+	else if (cmd.Compare((LPCWSTR)"MOVL") == 0)
+	{
+
+	}
+	else if (cmd.Compare((LPCWSTR)"GVEL") == 0)
+	{
+
+	}
+	else if (cmd.Compare((LPCWSTR)"GSTT") == 0)
+	{
+
+	}
+}
+
+void CMFCDemoDlg::OnTimer(UINT_PTR nIDEvent)
+{
+	// TODO: Add your message handler code here and/or call default
+	BYTE ProtocolFrame[50] = {};
+	UINT index = 0;
+	CString cmd;
+
+	if (!GetPortActivateValue()) return;
+
+	switch (nIDEvent) {
+	case EVENT_SEND_BY_TIMER:
+		memcpy(ProtocolFrame + index, bSTX, sizeof(bSTX));
+		index += sizeof(bSTX);
+		memcpy(ProtocolFrame + index, bGPOS, sizeof(bGPOS));
+		index += sizeof(bGPOS);
+		memcpy(ProtocolFrame + index, bOPT, sizeof(bOPT));
+		index += sizeof(bOPT);
+		memcpy(ProtocolFrame + index, bDATA, sizeof(bDATA));
+		index += sizeof(bDATA);
+		memcpy(ProtocolFrame + index, bSYNC, sizeof(bSYNC));
+		index += sizeof(bSYNC);
+		memcpy(ProtocolFrame + index, bETX, sizeof(bETX));
+		index += sizeof(bETX);
+
+		Write((char*)ProtocolFrame, index);
+		cmd.Format((LPCTSTR)"%s", "TIMER STT CMD: ");
+		m_listboxRead.InsertString(0, cmd);
+		cmd.Empty();
+		for (UINT i = 0; i < index; i++)
+		{
+			cmd.AppendFormat((LPCTSTR)"%02X", ProtocolFrame[i]);
+		}
+		m_listboxRead.InsertString(0, cmd);
+		break;
+	default:
+		break;
+	}
+		__super::OnTimer(nIDEvent);
+}
+
+
+void CMFCDemoDlg::OnBnClickedRadioTimer()
+{
+	// TODO: Add your control notification handler code here
+	SetTimer(EVENT_SEND_BY_TIMER, 1000, nullptr);
+}
+
+
+void CMFCDemoDlg::OnBnClickedRadioEvent()
+{
+	// TODO: Add your control notification handler code here
+	KillTimer(EVENT_SEND_BY_TIMER);
+
+	m_listboxRead.InsertString(0, reinterpret_cast<LPCTSTR>("Stop timer"));
 }

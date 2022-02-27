@@ -51,4 +51,19 @@ public:
 	CEdit m_ceSendCmd1;
 	CButton m_btnSendCmd1;
 	afx_msg void OnBnClickedButtonSend1();
+	CButton mBtnPosition;
+	CButton mBtnVelocity;
+	CButton mBtnMove;
+	CButton mBtnStatus;
+	afx_msg void OnBnClickedButtonPos();
+	CListBox m_listboxRead;
+	afx_msg void OnBnClickedButtonVel();
+	afx_msg void OnBnClickedButtonMov();
+	afx_msg void OnBnClickedButtonStt();
+
+	VOID ProcessData(char* data, int inLength);
+	CButton m_staticInfo;
+	afx_msg void OnTimer(UINT_PTR nIDEvent);
+	afx_msg void OnBnClickedRadioTimer();
+	afx_msg void OnBnClickedRadioEvent();
 };
