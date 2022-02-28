@@ -37,7 +37,7 @@ BOOL SerialCtrl::OpenPort(DCB dcb, const char* portName)
 
 	if (m_portStatus == FALSE)  // if port is opened already, not open port again.
 	{
-		m_portHandle = CreateFile((LPCWSTR)portName,  // Specify port device: default "COM1"
+		m_portHandle = CreateFile((LPCSTR)portName,  // Specify port device: default "COM1"
 			GENERIC_READ | GENERIC_WRITE,       // Specify mode that open device.
 			0,                                  // the divide isn't shared.
 			NULL,                               // the object gets a default security.
@@ -48,7 +48,7 @@ BOOL SerialCtrl::OpenPort(DCB dcb, const char* portName)
 												// Get current configuration of serial communication port.
 		if (GetCommState(m_portHandle, &m_portConfig) == 0)
 		{
-			AfxMessageBox((LPCWSTR)"Get configuration port has problem.");
+			AfxMessageBox((LPCSTR)"Get configuration port has problem.");
 			return FALSE;
 		}
 		// Assign user parameter.
@@ -60,7 +60,7 @@ BOOL SerialCtrl::OpenPort(DCB dcb, const char* portName)
 												 // Set current configuration of serial communication port.
 		if (SetCommState(m_portHandle, &m_portConfig) == 0)
 		{
-			AfxMessageBox((LPCWSTR)"Set configuration port has problem.");
+			AfxMessageBox((LPCSTR)"Set configuration port has problem.");
 			return FALSE;
 		}
 
@@ -165,7 +165,7 @@ BOOL SerialCtrl::Write(const char* outputData, const unsigned int& sizeBuffer, u
 			sizeBuffer,              // number of bytes to write
 			&length, NULL) == 0)      // pointer to number of bytes written
 		{
-			AfxMessageBox((LPCWSTR)"Reading of serial communication has problem.");
+			AfxMessageBox((LPCSTR)"Reading of serial communication has problem.");
 			return FALSE;
 		}
 		return TRUE;

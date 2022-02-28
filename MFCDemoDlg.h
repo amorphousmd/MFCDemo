@@ -62,7 +62,6 @@ public:
 	afx_msg void OnBnClickedButtonStt();
 
 	VOID ProcessData(char* data, int inLength);
-	CButton m_staticInfo;
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
 	afx_msg void OnBnClickedRadioTimer();
 	afx_msg void OnBnClickedRadioEvent();
@@ -70,4 +69,5 @@ public:
 	CButton m_chGPIO1;
 	CButton m_chLed2;
 	CButton m_chGPIO2;
+	CStatic m_staticInfo;
 };

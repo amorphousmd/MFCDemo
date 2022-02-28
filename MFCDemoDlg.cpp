@@ -14,18 +14,18 @@
 BYTE bSTX[] = { 0x02 };
 
 //CMD
-BYTE bMOVL[] = { 0x4D, 0x4F, 0x56, 0x4C };
-BYTE bGPOS[] = { 0x47, 0x50, 0x4F, 0x53 };
-BYTE bGVEL[] = { 0x47, 0x56, 0x45, 0x4C };
-BYTE bSTT[] = { 0x47, 0x53, 0x54, 0x54 };
+BYTE bMOVL[] = { 0x4D,0x4F,0x56,0x4C };
+BYTE bGPOS[] = { 0x47,0x50,0x4F,0x53 };
+BYTE bGVEL[] = { 0x47,0x56,0x45,0x4C };
+BYTE bSTT[] = { 0x47,0x53,0x54,0x54 };
 
 //OPTION
-BYTE bOPT[] = { 0x00, 0x00, 0x00 };
+BYTE bOPT[] = { 0x0,0x0,0x00 };
 
 //DATA
-BYTE bDATA[8] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x01 };
+BYTE bDATA[8] = { 0x00,0x00,0x00,0x00,0x00,0x01,0x00,0x01 };
 
-//SYNC & ACK
+//SYNC/ACK
 BYTE bSYNC[] = { 0x16 };
 BYTE bACK[] = { 0x06 };
 
@@ -33,8 +33,8 @@ BYTE bACK[] = { 0x06 };
 BYTE bETX[] = { 0x03 };
 
 //RECEIVE
-BYTE bProtocolDataBuffer[18] = {  };
-BYTE bProtocolData[8] = {  };
+BYTE bProtocolDataBuffer[18] = { };
+BYTE bProtocolData[8] = {};
 
 // CAboutDlg dialog used for App About
 
@@ -92,11 +92,11 @@ void CMFCDemoDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_BUTTON_MOV, mBtnMove);
 	DDX_Control(pDX, IDC_BUTTON_STT, mBtnStatus);
 	DDX_Control(pDX, IDC_LIST_RECEIVEDATA, m_listboxRead);
-	DDX_Control(pDX, IDC_BUTTON2, m_staticInfo);
 	DDX_Control(pDX, IDC_CHECK_LED1, m_chLed1);
 	DDX_Control(pDX, IDC_CHECK_GPIO1, m_chGPIO1);
 	DDX_Control(pDX, IDC_CHECK_LED2, m_chLed2);
 	DDX_Control(pDX, IDC_CHECK_GPIO2, m_chGPIO2);
+	DDX_Control(pDX, IDC_STATIC_INFO, m_staticInfo);
 }
 
 BEGIN_MESSAGE_MAP(CMFCDemoDlg, CDialogEx)
@@ -210,7 +210,6 @@ HCURSOR CMFCDemoDlg::OnQueryDragIcon()
 void CMFCDemoDlg::OnCbnDropdownComboSerialname()
 {
 	// TODO: Add your control notification handler code here
-		// TODO: Add your control notification handler code here
 	m_ccbSerialName.ResetContent();
 
 	TCHAR lpTargetPath[5000];
@@ -223,7 +222,7 @@ void CMFCDemoDlg::OnCbnDropdownComboSerialname()
 		str.Format(_T("%d"), i);
 		CString ComName = CString("COM") + CString(str);
 
-		test = QueryDosDevice(ComName, (LPWSTR)lpTargetPath, 2000);
+		test = QueryDosDevice(ComName, (LPSTR)lpTargetPath, 2000);
 
 		if (test != 0)
 		{
@@ -293,16 +292,16 @@ void CMFCDemoDlg::OnEventRead(char* inPacket, int inLength)
 	m_listboxRead.InsertString(0, csInPacket);
 	csInPacket.Empty();
 
-	for (UINT i = 0; i < (UINT)inLength; i++)
-	{
-		csInPacket.AppendFormat((CString)"%02X", csInPacket[i]);
+	for (UINT i = 0; i < (UINT)inLength; i++) {
+		csInPacket.AppendFormat((CString)"%02X ", inPacket[i]);
 	}
 	m_listboxRead.InsertString(0, csInPacket);
 
 	ProcessData(inPacket, inLength);
 
+
 	CString str;
-	str.Format((CString)"%d bytes read", inLength);
+	str.Format((LPCTSTR)"%d bytes read", inLength);
 
 	m_staticInfo.SetWindowText(str);
 }
@@ -349,18 +348,17 @@ void CMFCDemoDlg::OnBnClickedButtonPos()
 	index += sizeof(bSYNC);
 	memcpy(ProtocolFrame + index, bETX, sizeof(bETX));
 	index += sizeof(bETX);
-
+	/*std::copy(FRAME.begin(), FRAME.end(), res);*/
 	Write((char*)ProtocolFrame, index);
+
 	CString cmd;
 	cmd.Format((LPCTSTR)"%s", "POS CMD: ");
 	m_listboxRead.InsertString(0, cmd);
 	cmd.Empty();
-	for (UINT i = 0; i < index; i++)
-	{
-		cmd.AppendFormat((LPCTSTR)"%02X", ProtocolFrame[i]);
+	for (UINT i = 0; i < index; i++) {
+		cmd.AppendFormat((LPCTSTR)"%02X ", ProtocolFrame[i]);
 	}
 	m_listboxRead.InsertString(0, cmd);
-
 }
 
 
@@ -397,20 +395,20 @@ VOID CMFCDemoDlg::ProcessData(char* data, int inLength)
 		bProtocolData[i - 8] = bProtocolDataBuffer[i];
 	}
 
-	if (cmd.Compare((LPCWSTR)"GPOS") == 0)
+	if (cmd.Compare((LPCSTR)"GPOS") == 0)
 	{
 
 	}
 
-	else if (cmd.Compare((LPCWSTR)"MOVL") == 0)
+	else if (cmd.Compare((LPCSTR)"MOVL") == 0)
 	{
 
 	}
-	else if (cmd.Compare((LPCWSTR)"GVEL") == 0)
+	else if (cmd.Compare((LPCSTR)"GVEL") == 0)
 	{
 
 	}
-	else if (cmd.Compare((LPCWSTR)"GSTT") == 0)
+	else if (cmd.Compare((LPCSTR)"GSTT") == 0)
 	{
 		if (bProtocolDataBuffer[12] == 0x01) {
 			m_chLed1.SetCheck(1);
