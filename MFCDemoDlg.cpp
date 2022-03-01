@@ -529,8 +529,8 @@ void CMFCDemoDlg::OnTimer(UINT_PTR nIDEvent)
 	case EVENT_SEND_BY_TIMER:
 		memcpy(ProtocolFrame + index, bSTX, sizeof(bSTX));
 		index += sizeof(bSTX);
-		memcpy(ProtocolFrame + index, bGPOS, sizeof(bGPOS));
-		index += sizeof(bGPOS);
+		memcpy(ProtocolFrame + index, bSTT, sizeof(bSTT));
+		index += sizeof(bSTT);
 		memcpy(ProtocolFrame + index, bOPT, sizeof(bOPT));
 		index += sizeof(bOPT);
 		memcpy(ProtocolFrame + index, bDATA, sizeof(bDATA));
@@ -546,7 +546,7 @@ void CMFCDemoDlg::OnTimer(UINT_PTR nIDEvent)
 		cmd.Empty();
 		for (UINT i = 0; i < index; i++)
 		{
-			cmd.AppendFormat((LPCTSTR)"%02X", ProtocolFrame[i]);
+			cmd.AppendFormat((LPCTSTR)"%02X ", ProtocolFrame[i]);
 		}
 		m_listboxRead.InsertString(0, cmd);
 		break;
@@ -560,7 +560,7 @@ void CMFCDemoDlg::OnTimer(UINT_PTR nIDEvent)
 void CMFCDemoDlg::OnBnClickedRadioTimer()
 {
 	// TODO: Add your control notification handler code here
-	SetTimer(EVENT_SEND_BY_TIMER, 1000, nullptr);
+	SetTimer(EVENT_SEND_BY_TIMER, 2000, nullptr);
 }
 
 
