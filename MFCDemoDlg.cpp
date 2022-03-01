@@ -365,18 +365,96 @@ void CMFCDemoDlg::OnBnClickedButtonPos()
 void CMFCDemoDlg::OnBnClickedButtonVel()
 {
 	// TODO: Add your control notification handler code here
+	BYTE ProtocolFrame[50] = {};
+	UINT index = 0;
+	if (!GetPortActivateValue()) return;
+	memcpy(ProtocolFrame + index, bSTX, sizeof(bSTX));
+	index += sizeof(bSTX);
+	memcpy(ProtocolFrame + index, bGVEL, sizeof(bGVEL));
+	index += sizeof(bGVEL);
+	memcpy(ProtocolFrame + index, bOPT, sizeof(bOPT));
+	index += sizeof(bOPT);
+	memcpy(ProtocolFrame + index, bDATA, sizeof(bDATA));
+	index += sizeof(bDATA);
+	memcpy(ProtocolFrame + index, bSYNC, sizeof(bSYNC));
+	index += sizeof(bSYNC);
+	memcpy(ProtocolFrame + index, bETX, sizeof(bETX));
+	index += sizeof(bETX);
+	/*std::copy(FRAME.begin(), FRAME.end(), res);*/
+	Write((char*)ProtocolFrame, index);
+
+	CString cmd;
+	cmd.Format((LPCTSTR)"%s", "VEL CMD: ");
+	m_listboxRead.InsertString(0, cmd);
+	cmd.Empty();
+	for (UINT i = 0; i < index; i++) {
+		cmd.AppendFormat((LPCTSTR)"%02X ", ProtocolFrame[i]);
+	}
+	m_listboxRead.InsertString(0, cmd);
 }
 
 
 void CMFCDemoDlg::OnBnClickedButtonMov()
 {
 	// TODO: Add your control notification handler code here
+	BYTE ProtocolFrame[50] = {};
+	UINT index = 0;
+	if (!GetPortActivateValue()) return;
+	memcpy(ProtocolFrame + index, bSTX, sizeof(bSTX));
+	index += sizeof(bSTX);
+	memcpy(ProtocolFrame + index, bMOVL, sizeof(bMOVL));
+	index += sizeof(bMOVL);
+	memcpy(ProtocolFrame + index, bOPT, sizeof(bOPT));
+	index += sizeof(bOPT);
+	memcpy(ProtocolFrame + index, bDATA, sizeof(bDATA));
+	index += sizeof(bDATA);
+	memcpy(ProtocolFrame + index, bSYNC, sizeof(bSYNC));
+	index += sizeof(bSYNC);
+	memcpy(ProtocolFrame + index, bETX, sizeof(bETX));
+	index += sizeof(bETX);
+	/*std::copy(FRAME.begin(), FRAME.end(), res);*/
+	Write((char*)ProtocolFrame, index);
+
+	CString cmd;
+	cmd.Format((LPCTSTR)"%s", "MOV CMD: ");
+	m_listboxRead.InsertString(0, cmd);
+	cmd.Empty();
+	for (UINT i = 0; i < index; i++) {
+		cmd.AppendFormat((LPCTSTR)"%02X ", ProtocolFrame[i]);
+	}
+	m_listboxRead.InsertString(0, cmd);
 }
 
 
 void CMFCDemoDlg::OnBnClickedButtonStt()
 {
 	// TODO: Add your control notification handler code here
+	BYTE ProtocolFrame[50] = {};
+	UINT index = 0;
+	if (!GetPortActivateValue()) return;
+	memcpy(ProtocolFrame + index, bSTX, sizeof(bSTX));
+	index += sizeof(bSTX);
+	memcpy(ProtocolFrame + index, bSTT, sizeof(bSTT));
+	index += sizeof(bSTT);
+	memcpy(ProtocolFrame + index, bOPT, sizeof(bOPT));
+	index += sizeof(bOPT);
+	memcpy(ProtocolFrame + index, bDATA, sizeof(bDATA));
+	index += sizeof(bDATA);
+	memcpy(ProtocolFrame + index, bSYNC, sizeof(bSYNC));
+	index += sizeof(bSYNC);
+	memcpy(ProtocolFrame + index, bETX, sizeof(bETX));
+	index += sizeof(bETX);
+	/*std::copy(FRAME.begin(), FRAME.end(), res);*/
+	Write((char*)ProtocolFrame, index);
+
+	CString cmd;
+	cmd.Format((LPCTSTR)"%s", "STT CMD: ");
+	m_listboxRead.InsertString(0, cmd);
+	cmd.Empty();
+	for (UINT i = 0; i < index; i++) {
+		cmd.AppendFormat((LPCTSTR)"%02X ", ProtocolFrame[i]);
+	}
+	m_listboxRead.InsertString(0, cmd);
 }
 
 VOID CMFCDemoDlg::ProcessData(char* data, int inLength)
