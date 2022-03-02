@@ -319,7 +319,6 @@ void CMFCDemoDlg::OnEventWrite(int nWritten)
 void CMFCDemoDlg::OnBnClickedButtonSend1()
 {
 	// TODO: Add your control notification handler code here
-		// TODO: Add your control notification handler code here
 	CString	Cmd;
 	if (!GetPortActivateValue()) return;
 
@@ -560,7 +559,7 @@ void CMFCDemoDlg::OnTimer(UINT_PTR nIDEvent)
 void CMFCDemoDlg::OnBnClickedRadioTimer()
 {
 	// TODO: Add your control notification handler code here
-	SetTimer(EVENT_SEND_BY_TIMER, 2000, nullptr);
+	SetTimer(EVENT_SEND_BY_TIMER, 1000, nullptr);
 }
 
 
