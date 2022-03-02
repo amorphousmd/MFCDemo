@@ -319,13 +319,11 @@ void CMFCDemoDlg::OnEventWrite(int nWritten)
 void CMFCDemoDlg::OnBnClickedButtonSend1()
 {
 	// TODO: Add your control notification handler code here
-	CString	Cmd;
 	if (!GetPortActivateValue()) return;
 
-	m_ceSendCmd1.GetWindowText(Cmd);
-
-	TCHAR* cmd = (LPTSTR)(LPCTSTR)Cmd;
-	Write((char*)cmd, Cmd.GetLength());
+	CString strW;
+	m_ceSendCmd1.GetWindowText(strW);
+	Write((LPTSTR)(LPCTSTR)strW, strW.GetLength());
 }
 
 
